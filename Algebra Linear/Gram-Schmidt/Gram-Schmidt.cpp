@@ -1,27 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
-#define MAX 1123
-#define URL "ortogonaliza.txt"
+#define MAX 100
+#define URL "ortogonaliza4.txt"
 
 int dimensao;
 
-int verificaLD(float matrizVetores[MAX][MAX]){
-  int flag = false;
-  float a;
+float Determinant(float a[MAX][MAX],int n){
+  int i,j,j1,j2;
+  float det = 0;
+  float m[MAX][MAX];
   
-  for(int i = 0; i < dimensao && !flag; i++){
-    for(int j = 0; j < dimensao && !flag; j++){
-      if(i < j){
-	a = (matrizVetores[i][0]/(float)matrizVetores[j][0]);
-	for(int k = 1; k < dimensao && !flag; k++){
-	  if(a != (matrizVetores[i][k]/(float)matrizVetores[j][k]))
-	    flag = 1;
+  if (n < 1) {
+  } else if (n == 1) { 
+    det = a[0][0];
+  } else if (n == 2) {
+    det = a[0][0] * a[1][1] - a[1][0] * a[0][1];
+    
+  } else {
+    det = 0;
+    for (j1=0;j1<n;j1++) {
+      for (i=1;i<n;i++) {
+	j2 = 0;
+	for (j=0;j<n;j++) {
+	  if (j == j1) continue;
+	  m[i-1][j2] = a[i][j];
+	  j2++;
 	}
       }
+      det += pow(-1.0,1.0+j1+1.0) * a[0][j1] * Determinant(m,n-1);
     }
   }
-  return flag;
+  return(det);
 }
 
 void produtoInterno(float v[], float u[], float proj[]){
@@ -81,8 +92,12 @@ int leituraArquivo(float matrizVetores[MAX][MAX]){
 int main(){
   float matrizVetores[MAX][MAX];
   leituraArquivo(matrizVetores);
-
-  gramSchmidt(matrizVetores);
+  printf("%f\n",Determinant(matrizVetores,(dimensao)));
+  
+    if(Determinant(matrizVetores,dimensao)){
+      gramSchmidt(matrizVetores);
+    }
+  
   
   for(int l= 0; l< dimensao; l++){
     for(int c = 0; c < dimensao; c++)
