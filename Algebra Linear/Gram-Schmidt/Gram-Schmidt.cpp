@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #define MAX 1123
-#define URL "ortogonaliza3.txt"
+#define URL "ortogonaliza.txt"
 
 int dimensao;
 
@@ -31,11 +31,11 @@ void produtoInterno(float v[], float u[], float proj[]){
     numerador += v[i]*u[i];
   for(int i = 0; i < dimensao; i++)
     denominador += u[i]*u[i];
-
+  
   escalar = (numerador/denominador);
-
-  for(int i = 0; i < dimensao; i++)
+  for(int i = 0; i < dimensao; i++){
     proj[i] = u[i]*escalar;
+  }
 }
 
 void gramSchmidt(float matrizVetores[MAX][MAX]){
@@ -67,7 +67,7 @@ int leituraArquivo(float matrizVetores[MAX][MAX]){
       matrizVetores[l][c] = (result-48);
       c++;
     }
-    
+  
     if(result == ')' && c){
       dimensao = c;
       c=0; 
@@ -81,7 +81,7 @@ int leituraArquivo(float matrizVetores[MAX][MAX]){
 int main(){
   float matrizVetores[MAX][MAX];
   leituraArquivo(matrizVetores);
-  
+
   gramSchmidt(matrizVetores);
   
   for(int l= 0; l< dimensao; l++){
