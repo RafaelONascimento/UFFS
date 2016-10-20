@@ -1,0 +1,6 @@
+public class Livro{
+    private String titulo;
+    private int ano;
+    private Editora editora;
+    private Autor autor;
+}
