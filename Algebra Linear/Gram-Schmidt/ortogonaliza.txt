@@ -1,0 +1,4 @@
+//Estes são os vetores que devem ser usados
+(3,1)
+(2,2)
+//Fim do arquivo
