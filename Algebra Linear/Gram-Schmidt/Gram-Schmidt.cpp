@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #define MAX 1123
-#define URL "ortogonaliza.txt"
+#define URL "ortogonaliza3.txt"
 
 int dimensao;
 
@@ -33,7 +33,7 @@ void produtoInterno(float v[], float u[], float proj[]){
     denominador += u[i]*u[i];
 
   escalar = (numerador/denominador);
-  printf("%f\n",escalar);
+
   for(int i = 0; i < dimensao; i++)
     proj[i] = u[i]*escalar;
 }
@@ -65,11 +65,8 @@ int leituraArquivo(float matrizVetores[MAX][MAX]){
     result = fgetc(arq);
     if(result >= 48 &&  result <= 57){
       matrizVetores[l][c] = (result-48);
-      printf("%d\n",(result-48));
       c++;
     }
-
-    
     
     if(result == ')' && c){
       dimensao = c;
@@ -85,24 +82,13 @@ int main(){
   float matrizVetores[MAX][MAX];
   leituraArquivo(matrizVetores);
   
-  for(int l= 0; l< dimensao; l++){
-    for(int c = 0; c < dimensao; c++){
-      printf("%f ", matrizVetores[l][c]);
-    }
-    printf("\n");
-  }
-
-  printf("-------------------\n");
-
   gramSchmidt(matrizVetores);
   
   for(int l= 0; l< dimensao; l++){
-    for(int c = 0; c < dimensao; c++){
+    for(int c = 0; c < dimensao; c++)
       printf("%f ", matrizVetores[l][c]);
-    }
     printf("\n");
   }
   
-  printf("%d\n",verificaLD(matrizVetores));
   return 0;
 }
