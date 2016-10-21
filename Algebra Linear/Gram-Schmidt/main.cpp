@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define MAX 100
-#define URL "ortogonaliza.txt"
+#define URL "ortogonaliza3.txt"
 
 int dimensao = 0;
 
@@ -63,43 +63,48 @@ void gramSchmidt(float matrizVetores[MAX][MAX]){
 }
 
 void leituraArquivo(float Matriz[MAX][MAX]){
-  char s[2] = ",", linha[130]; 
-  char *coluna, *result;    
+  char s[2] = ",";
+  char *coluna;  
+  char linha[130]; 
+  char *result;  
 
   FILE *fMatriz;
 
-  int j= 0, i= 0, flag = 1;
+  int j= 0, i= 0;
 
-  if((fMatriz = fopen(URL,"r")) != NULL) {
+  if((fMatriz = fopen("ortogonaliza3.txt","r")) != NULL) {
     i = 0;
-    while (!feof(fMatriz) && i < 100 && flag){
+    while (!feof(fMatriz) && i < 100){ 	     
       result = fgets(linha, 130, fMatriz); 
       if(!(linha[0] == '/' && linha[1] == '/')){
-       	linha[0]=',';
-	if (result) coluna = strtok(result, s);
-	else break;
+	linha[0]=',';
+	if (result){
+	  coluna = strtok(result, s); 
+	}else
+	  break;
 	
 	j = 0;
-
-	while(coluna != NULL ){ // enquanto não chegar na ultima coluna  
+	
+	while( coluna != NULL ){ 
 	  Matriz[i][j] = atof(coluna);
 	  coluna = strtok(NULL, s);
-	  
-	  if (dimensao < j) dimensao = (j+1);
+
+	  if ((dimensao-1) < j){
+	    dimensao = (j+1);
+	  }
 	  j++;
 	}
 	i++;
-	if(i >= dimensao) flag =0;
       }
     }
+    
     fclose(fMatriz);
   }
 }
 
-  
 void saidaNoArquivo(float matrizVetores[MAX][MAX]){
   FILE *f = fopen(URL,"a+");
-
+  
   for(int i = 0; i < dimensao; i++){
     fprintf(f,"(");
     for(int j = 0; j < dimensao; j++){
@@ -119,11 +124,10 @@ int main(){
   if(Determinant(matrizVetores,dimensao)){
     gramSchmidt(matrizVetores);
     saidaNoArquivo(matrizVetores);
-    printf("Processo efetuado com sucesso, os vetores foram escritos no arquivo\n");
+    printf("SUCESSO: Os novos vetores foram escritos no arquivo!\n");
   }
   else{
-    printf("Vetores informados não são linearmente indempendentes\n");
+    printf("ERRO: Vetores informados não são linearmente independentes!\n");
   }
-  
   return 0;
 }
