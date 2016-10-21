@@ -4,9 +4,9 @@
 #include <string.h>
 
 #define MAX 100
-#define URL "ortogonaliza4.txt"
+#define URL "ortogonaliza.txt"
 
-int dimensao;
+int dimensao = 0;
 
 float Determinant(float a[MAX][MAX],int n){
   int i,j,j1,j2;
@@ -68,38 +68,49 @@ void leituraArquivo(float Matriz[MAX][MAX]){
 
   FILE *fMatriz;
 
-  int j= 0, i= 0;
+  int j= 0, i= 0, flag = 1;
 
-  if((fMatriz = fopen(URL,"r")) != NULL) {// SE não existe o arquivo não deve ler
+  if((fMatriz = fopen(URL,"r")) != NULL) {
     i = 0;
-    while (!feof(fMatriz) && i < 100){ //para garantir que não passa do tamanho da Matriz.
-      result = fgets(linha, 130, fMatriz); // Le a linha
+    while (!feof(fMatriz) && i < 100 && flag){
+      result = fgets(linha, 130, fMatriz); 
       if(!(linha[0] == '/' && linha[1] == '/')){
-	linha[0]=',';
-	if (result){
-	  coluna = strtok(result, s);
-	}
-	else{
-	  break;
-	}
+       	linha[0]=',';
+	if (result) coluna = strtok(result, s);
+	else break;
 	
 	j = 0;
-       
-	while( coluna != NULL ){
+
+	while(coluna != NULL ){ // enquanto não chegar na ultima coluna  
 	  Matriz[i][j] = atof(coluna);
 	  coluna = strtok(NULL, s);
-
-	  if (dimensao < j)
-	    dimensao = j;
+	  
+	  if (dimensao < j) dimensao = (j+1);
 	  j++;
 	}
 	i++;
+	if(i >= dimensao) flag =0;
       }
     }
     fclose(fMatriz);
   }
-} 
+}
 
+  
+void saidaNoArquivo(float matrizVetores[MAX][MAX]){
+  FILE *f = fopen(URL,"a+");
+
+  for(int i = 0; i < dimensao; i++){
+    fprintf(f,"(");
+    for(int j = 0; j < dimensao; j++){
+      fprintf(f,"%.4f",matrizVetores[i][j]);
+      if(j != (dimensao-1)) fprintf(f,",");
+    }
+    fprintf(f,")\n");
+  }
+  
+  fclose(f);
+}
 
 int main(){
   float matrizVetores[MAX][MAX];
@@ -107,14 +118,12 @@ int main(){
   
   if(Determinant(matrizVetores,dimensao)){
     gramSchmidt(matrizVetores);
+    saidaNoArquivo(matrizVetores);
+    printf("Processo efetuado com sucesso, os vetores foram escritos no arquivo\n");
+  }
+  else{
+    printf("Vetores informados não são linearmente indempendentes\n");
   }
   
-	 
-  for(int l= 0; l<= dimensao; l++){
-    for(int c = 0; c <= dimensao; c++)
-      printf("%f ", matrizVetores[l][c]);
-    printf("\n");
-  }
-	 
   return 0;
 }
