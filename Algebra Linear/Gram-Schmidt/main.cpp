@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define MAX 100
-#define URL "ortogonaliza3.txt"
+#define URL "ortogonaliza.txt"
 
 int dimensao = 0;
 
@@ -62,7 +62,7 @@ void gramSchmidt(float matrizVetores[MAX][MAX]){
   }
 }
 
-void leituraArquivo(float Matriz[MAX][MAX]){
+int leituraArquivo(float Matriz[MAX][MAX]){
   char s[2] = ",";
   char *coluna;  
   char linha[130]; 
@@ -72,7 +72,7 @@ void leituraArquivo(float Matriz[MAX][MAX]){
 
   int j= 0, i= 0;
 
-  if((fMatriz = fopen("ortogonaliza3.txt","r")) != NULL) {
+  if((fMatriz = fopen(URL,"r")) != NULL) {
     i = 0;
     while (!feof(fMatriz) && i < 100){ 	     
       result = fgets(linha, 130, fMatriz); 
@@ -96,38 +96,50 @@ void leituraArquivo(float Matriz[MAX][MAX]){
 	}
 	i++;
       }
-    }
-    
+    } 
     fclose(fMatriz);
+    return 1;
+  }
+  else{
+    return 0;
   }
 }
 
-void saidaNoArquivo(float matrizVetores[MAX][MAX]){
+int saidaNoArquivo(float matrizVetores[MAX][MAX]){
   FILE *f = fopen(URL,"a+");
   
-  for(int i = 0; i < dimensao; i++){
-    fprintf(f,"(");
-    for(int j = 0; j < dimensao; j++){
-      fprintf(f,"%.4f",matrizVetores[i][j]);
-      if(j != (dimensao-1)) fprintf(f,",");
+  if(f != NULL){
+    for(int i = 0; i < dimensao; i++){
+      fprintf(f,"(");
+      for(int j = 0; j < dimensao; j++){
+	fprintf(f,"%.4f",matrizVetores[i][j]);
+	if(j != (dimensao-1)) fprintf(f,",");
+      }
+      fprintf(f,")\n");
     }
-    fprintf(f,")\n");
+    fclose(f);
+    return 1;
   }
-  
-  fclose(f);
+  return 0;
 }
 
 int main(){
   float matrizVetores[MAX][MAX];
-  leituraArquivo(matrizVetores);
-  
-  if(Determinant(matrizVetores,dimensao)){
-    gramSchmidt(matrizVetores);
-    saidaNoArquivo(matrizVetores);
-    printf("SUCESSO: Os novos vetores foram escritos no arquivo!\n");
+  if(leituraArquivo(matrizVetores)){
+    if(Determinant(matrizVetores,dimensao)){
+      gramSchmidt(matrizVetores);
+
+      if(saidaNoArquivo(matrizVetores))
+	printf("SUCESSO: Os novos vetores foram escritos no arquivo!\n");
+      else
+	printf("ERRO: Aquivo 'ortogonaliza.txt' nao encontrado na pasta!\n");
+    }
+    else{
+      printf("ERRO: Vetores informados não são linearmente independentes!\n");
+    }
   }
   else{
-    printf("ERRO: Vetores informados não são linearmente independentes!\n");
+    printf("ERRO: Aquivo 'ortogonaliza.txt' nao encontrado na pasta!\n");
   }
   return 0;
 }
